@@ -28,7 +28,7 @@ list_tables_func = FunctionDeclaration(
         "type": "object",
         "properties": {
             "dataset_id": {
-                "type": "string",
+                "type": "array",
                 "description": "Dataset ID to fetch tables from.",
             }
         },
@@ -57,7 +57,11 @@ get_table_func = FunctionDeclaration(
 
 sql_query_func = FunctionDeclaration(
     name="sql_query",
-    description="Get information from data in BigQuery using SQL queries",
+    description="""Get information from data in BigQuery using SQL queries. 
+        for all the queries use use dv_test_1 as a default dataset.
+        use table test1 for all the clinical releted queries.
+        use documentclass to filter out the type of clinical orders (example: ORDER, SURGERY)
+        use createddatetime for all the date and time releated queries.""",
     parameters={
         "type": "object",
         "properties": {
@@ -159,35 +163,34 @@ if prompt := st.chat_input("Ask me about information in the database..."):
         while function_calling_in_process:
             try:
                 #setting params
-                testparams = response.function_call.args
-                print("test params: ")
-                print(", ".join(f"{k}: {v}" for k, v in testparams.items()))
+                
                 for key, value in response.function_call.args.items():
                     params[key] = value
                 
-                print("1 - chat_send: " + api_response + "; call_name: " + response.function_call.name + "; params: ")
+                print("1 - chat_send: " + str(api_response) + "; call_name: " + response.function_call.name + "; params: ")
                 print(", ".join(f"{k}: {v}" for k, v in params.items()))
                 
                 if response.function_call.name == "list_datasets":
                     api_response = client.list_datasets()
                     for dataset in api_response:
                         datasets.append(str(dataset.dataset_id))
-                    api_response = " ,".join(datasets)
+                    api_response = datasets # " ,".join(datasets)
                     api_requests_and_responses.append(
                         [response.function_call.name, params, api_response]
                     )
                     # datasets = api_response
                 if response.function_call.name == "list_tables":
-                    for dataset in datasets:
-                        resp = client.list_tables(dataset)
-                        for table in resp:
-                            api_response.append(str(table.table_id))
-                        # api_response = str([table.table_id ])
-                    # api_response = client.list_tables(params["dataset_id"])
-                    # api_response = str([table.table_id for table in api_response])
-                    api_requests_and_responses.append(
-                        [response.function_call.name, params, api_response]
-                    )
+                    api_response = ""
+                    for d in params["dataset_id"]:
+                        print("dataset id = " + d)
+                        #print(d)
+                        tmp_response = client.list_tables(d)
+                        tmp_response = str([table.table_id for table in tmp_response])
+                        print("inside:" + tmp_response)
+                        api_response = api_response + tmp_response
+                        api_requests_and_responses.append(
+                        [response.function_call.name, params, api_response])
+                    print("outside:" + api_response)
 
                 if response.function_call.name == "get_table":
                     api_response = client.get_table(params["table_id"])
@@ -233,20 +236,14 @@ if prompt := st.chat_input("Ask me about information in the database..."):
                             [response.function_call.name, params, api_response]
                         )
 
-                print("2  - chat_send: " + api_response + "; call_name: " + response.function_call.name + "; params: ")
+                print("2  - chat_send: " + str(api_response) + "; call_name: " + response.function_call.name + "; params: ")
                 print(", ".join(f"{k}: {v}" for k, v in params.items()))
 
                 response = chat.send_message(
                     Part.from_function_response(
                         name=response.function_call.name, 
-                        # 1. list data sets
-                        # 2. list tables
-                        # 3. list tables
                         response={
                             "content": api_response,
-                            # 1. list data sets - ""
-                            # 2. list tables    - "dv_test_1"
-                            # 3. list tables    - "dv_test_2"
                         },
                     ),
                 )
@@ -279,9 +276,9 @@ if prompt := st.chat_input("Ask me about information in the database..."):
 
         time.sleep(3)
 
-        full_response = response.text + ""
+        full_response =  response.text
         with message_placeholder.container():
-            st.markdown(full_response.replace("$", "\$"))  # noqa: W605
+            st.markdown(full_response.replace("$", "\$"))
             with st.expander("Function calls, parameters, and responses:"):
                 st.markdown(backend_details)
 
