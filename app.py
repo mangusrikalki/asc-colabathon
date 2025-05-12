@@ -23,7 +23,7 @@ list_datasets_func = FunctionDeclaration(
 
 list_tables_func = FunctionDeclaration(
     name="list_tables",
-    description="List tables in a dataset",
+    description="List tables in all the datasets from the array of datasets given in arguments",
     parameters={
         "type": "object",
         "properties": {
@@ -40,7 +40,8 @@ list_tables_func = FunctionDeclaration(
 
 get_table_func = FunctionDeclaration(
     name="get_table",
-    description="Get information about a table, including the description, schema, and number of rows that will help answer the user's question. Always use the fully qualified dataset and table names.",
+    description="""Get information about a table, including the description, schema, and number of rows that will help answer the user's question.
+        Always use the fully qualified dataset and table names.""",
     parameters={
         "type": "object",
         "properties": {
@@ -92,20 +93,21 @@ model = GenerativeModel(
 )
 
 st.set_page_config(
-    page_title="SQL Talk with BigQuery",
+    page_title="AI Chat bot for the Clinical Data",
     layout="wide",
 )
 
 col1, col2 = st.columns([8, 1])
 with col1:
-    st.title("SQL Talk with BigQuery Google Ads Data Transfer")
+    st.title("AI Chat bot for Health Care Clinical Data")
 with col2:
     st.text("Demo")
 
-st.subheader("Powered by Function Calling in Gemini")
+st.subheader("Using Vertex AI - Gemini AI - Function Calling")
 
 st.markdown(
-    "[Source Code](https://github.com/GoogleCloudPlatform/generative-ai/tree/main/gemini/function-calling/sql-talk-app/)   •   [Documentation](https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/function-calling)   •   [Codelab](https://codelabs.developers.google.com/codelabs/gemini-function-calling)   •   [Sample Notebook](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/gemini/function-calling/intro_function_calling.ipynb)"
+    """[Source Code](https://github.com/mangusrikalki/asc-colabathon/blob/main/app.py)   •
+    [Documentation](https://github.com/mangusrikalki/asc-colabathon/blob/main/readme.md)"""
 )
 
 with st.expander("Sample prompts", expanded=True):
@@ -113,9 +115,7 @@ with st.expander("Sample prompts", expanded=True):
         """
         - What kind of information is in this database?
         - Can you show the top 3 campaigns by impressions?
-        - Can you show how clicks are distributed across devices?
-        - What is the click-through rate (clicks divided by impressions) for campaigns in the 'DISPLAY' Network?
-    """
+        """
     )
 
 if "messages" not in st.session_state:
@@ -172,8 +172,10 @@ if prompt := st.chat_input("Ask me about information in the database..."):
                 
                 if response.function_call.name == "list_datasets":
                     api_response = client.list_datasets()
+                    # api_response = str([dataset.dataset_id for dataset in api_response])
                     for dataset in api_response:
                         datasets.append(str(dataset.dataset_id))
+                    print("datasets: " + str(datasets))
                     api_response = datasets # " ,".join(datasets)
                     api_requests_and_responses.append(
                         [response.function_call.name, params, api_response]
@@ -183,7 +185,7 @@ if prompt := st.chat_input("Ask me about information in the database..."):
                     api_response = ""
                     for d in params["dataset_id"]:
                         print("dataset id = " + d)
-                        #print(d)
+                        print(d)
                         tmp_response = client.list_tables(d)
                         tmp_response = str([table.table_id for table in tmp_response])
                         print("inside:" + tmp_response)
@@ -268,8 +270,8 @@ if prompt := st.chat_input("Ask me about information in the database..."):
                     + "```"
                 )
                 backend_details += "\n\n"
-                with message_placeholder.container():
-                    st.markdown(backend_details)
+                # with message_placeholder.container():
+                    # st.markdown(backend_details)
 
             except AttributeError:
                 function_calling_in_process = False
@@ -279,8 +281,8 @@ if prompt := st.chat_input("Ask me about information in the database..."):
         full_response =  response.text
         with message_placeholder.container():
             st.markdown(full_response.replace("$", "\$"))
-            with st.expander("Function calls, parameters, and responses:"):
-                st.markdown(backend_details)
+        #     with st.expander("Function calls, parameters, and responses:"):
+        #         st.markdown(backend_details)
 
         st.session_state.messages.append(
             {
