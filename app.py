@@ -124,11 +124,11 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"].replace("$", "\$"))  # noqa: W605
-        try:
-            with st.expander("Function calls, parameters, and responses"):
-                st.markdown(message["backend_details"])
-        except KeyError:
-            pass
+        # try:
+        #     with st.expander("Function calls, parameters, and responses"):
+        #         st.markdown(message["backend_details"])
+        # except KeyError:
+        #     pass
 
 if prompt := st.chat_input("Ask me about information in the database..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
