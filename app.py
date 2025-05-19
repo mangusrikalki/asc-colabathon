@@ -9,7 +9,7 @@ vertexai.init(
     location="us-central1"
 )
 
-BIGQUERY_DATASET_ID = "dv_test_1"
+BIGQUERY_DATASET_ID = "UDMH"
 GCP_PROJECT_ID= "asc-colabathon"
 
 list_datasets_func = FunctionDeclaration(
@@ -59,10 +59,13 @@ get_table_func = FunctionDeclaration(
 sql_query_func = FunctionDeclaration(
     name="sql_query",
     description="""Get information from data in BigQuery using SQL queries. 
-        for all the queries use use dv_test_1 as a default dataset.
-        use table test1 for all the clinical releted queries.
-        use documentclass to filter out the type of clinical orders (example: ORDER, SURGERY)
-        use createddatetime for all the date and time releated queries.""",
+        for all the queries use use UDMH as a default dataset.
+        use table clncl_ordr_dim for all the clinical releted queries. use order_type to filter out the type of clinical orders (example: Medication, Lab, Imaging). use order_date for all the date and time releated queries.
+        use patient_dim for the patient data. 
+        use provider_dim for the provider data.
+        use medication_dim for the medication details.
+        use encounter_dim for the patient encounters to the hospital. use the discharge_date-admission_date for the number of days stayed in the hospital. 
+        """,
     parameters={
         "type": "object",
         "properties": {
@@ -114,7 +117,7 @@ with st.expander("Sample prompts", expanded=True):
     st.write(
         """
         - What kind of information is in this database?
-        - Can you show the top 3 campaigns by impressions?
+        - Get me lab orders count for the last week?
         """
     )
 
@@ -123,7 +126,7 @@ if "messages" not in st.session_state:
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
-        st.markdown(message["content"].replace("$", "\$"))  # noqa: W605
+        st.markdown(message["content"].replace("$", "\$"))
         # try:
         #     with st.expander("Function calls, parameters, and responses"):
         #         st.markdown(message["backend_details"])
