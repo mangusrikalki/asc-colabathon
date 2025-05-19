@@ -61,7 +61,7 @@ sql_query_func = FunctionDeclaration(
     description="""Get information from data in BigQuery using SQL queries. 
         for all the queries use use UDMH as a default dataset.
         use table clncl_ordr_dim for all the clinical releted queries. use order_type to filter out the type of clinical orders (example: Medication, Lab, Imaging). use order_date for all the date and time releated queries.
-        use patient_dim for the patient data. 
+        use patient_dim for the patient data. use gender for sex. dob is date of birth. use the address column to determine the location, it is formatted as street address, city, state, zip code.
         use provider_dim for the provider data.
         use medication_dim for the medication details.
         use encounter_dim for the patient encounters to the hospital. use the discharge_date-admission_date for the number of days stayed in the hospital. 
@@ -126,7 +126,7 @@ if "messages" not in st.session_state:
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
-        st.markdown(message["content"].replace("$", "\$"))
+        st.markdown(message["content"].replace("$", "\$"))  # noqa: W605
         # try:
         #     with st.expander("Function calls, parameters, and responses"):
         #         st.markdown(message["backend_details"])
