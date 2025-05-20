@@ -14,3 +14,4 @@ how many types of clinical data do you have and get me the the counts?
 
 get me top 10 patients with longest duration in the hospital
 
+get me top 10 doctors and number of patients he attended to
