@@ -60,11 +60,11 @@ sql_query_func = FunctionDeclaration(
     name="sql_query",
     description="""Get information from data in BigQuery using SQL queries. 
         for all the queries use use UDMH as a default dataset.
-        use table clncl_ordr_dim for all the clinical releted queries. use order_type to filter out the type of clinical orders (example: Medication, Lab, Imaging). use order_date for all the date and time releated queries.
-        use patient_dim for the patient data. use gender for sex. dob is date of birth. use the address column to determine the location, it is formatted as street address, city, state, zip code.
-        use provider_dim for the provider data.
+        use patient_dim for the patient data. use gender for sex. dob is date of birth. use the address column to determine the location, it is formatted as street address, city, state, zip code. use first_name and last_name for the name. use patient_id key to join with clncl_ordr_dim and enoucnter_dim table.
+        use provider_dim for the provider data. use first_name and last_name columns if name is needed. use provider_id key to join with clncl_ordr_dim and enoucnter_dim table.
+        use clncl_ordr_dim for all the clinical releted queries. this is provider ordering clinicals for the patients. use order_type to filter out the type of clinical orders (example: Medication, Lab, Imaging, Surgery). use order_date for all the date and time releated queries. use provider_id to join with provider_dim table. use patient_id to join with patient_dim table.
+        use encounter_dim for the patient encounters/visits/stays at the hospital with the provider. use the discharge_date-admission_date for the number of days stayed in the hospital. use provider_id to join with provider_dim table. use patient_id to join with patient_dim table.
         use medication_dim for the medication details.
-        use encounter_dim for the patient encounters to the hospital. use the discharge_date-admission_date for the number of days stayed in the hospital. 
         """,
     parameters={
         "type": "object",

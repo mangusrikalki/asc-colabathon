@@ -1,15 +1,16 @@
 What can you do?
 Can you list all the datasets?
 Can you get me the tables from UDMH dataset?
-Can you get all the tables from all the datasets?
 
 what type of orders do you have?
 
 how many clinical orders?
 
-how many clinical orders are there from last week
+how many clinical orders are there from last week?
 
-how many surgeries are perfomed last week?
+how many labs have been ordered in the last week?
 
-how many types of clinical data do you have and can you give me the counts?
+how many types of clinical data do you have and get me the the counts?
+
+get me top 10 patients with longest duration in the hospital
 
