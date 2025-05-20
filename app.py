@@ -125,7 +125,9 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
+    if message["role"] == "user": avatar = ":material/chevron_right:"
+    else: avatar = ":material/double_arrow:"
+    with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"].replace("$", "\$"))  # noqa: W605
         # try:
         #     with st.expander("Function calls, parameters, and responses"):
@@ -135,10 +137,10 @@ for message in st.session_state.messages:
 
 if prompt := st.chat_input("Ask me about information in the database..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar=":material/chevron_right:"):
         st.markdown(prompt)
 
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar=":material/double_arrow:"):
         message_placeholder = st.empty()
         full_response = ""
         chat = model.start_chat()
