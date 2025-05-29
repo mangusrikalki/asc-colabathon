@@ -280,10 +280,14 @@ if prompt := st.chat_input("Ask me about information in the database..."):
 
             except AttributeError:
                 function_calling_in_process = False
+            except:
+                function_calling_in_process = False
+                full_response = "Cannot fulfill this request at this moment. Try a differnt prompt"
 
         time.sleep(3)
 
-        full_response =  response.text
+        if len(full_response) == 0:
+            full_response =  response.text
         with message_placeholder.container():
             st.markdown(full_response.replace("$", "\$"))
         #     with st.expander("Function calls, parameters, and responses:"):
