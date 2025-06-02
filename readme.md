@@ -11,7 +11,7 @@ how many clinicals are ordered last week?
 how many surgeries are performed in the last 2 days?
 num of patients stayed in the hospital more than a day
 average hospital stay of all the patients
-number of patient encounters re-admitted with in 20 days of a previous discharge
+number of inpatients joined with in 5 days of a previous discharge
 get me top 10 patients with longest duration in the hospital
 give me the top 3 reasons of the patient stayed in the hospital longest
 
